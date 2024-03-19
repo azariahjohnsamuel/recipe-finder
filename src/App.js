@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import SearchBar from './components/SearchBar';
+import RecipeList from './components/RecipeList';
+import Header from './components/header';
+import Footer from './components/footer';
+import RecipeDetails from './components/RecipeDetails'; 
+import { fetchRecipes } from './services/recipeService';
+import './styles.css';
 
-function App() {
+const App = () => {
+  const [recipes, setRecipes] = useState([]);
+
+  const handleSearch = async (query) => {
+    const fetchedRecipes = await fetchRecipes(query);
+    setRecipes(fetchedRecipes);
+  };
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
+
+  const handleRecipeClick = (recipe) => {
+    setSelectedRecipe(recipe);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <Header></Header>
+      <SearchBar onSearch={handleSearch} />
+      {selectedRecipe ? (
+          <RecipeDetails recipe={selectedRecipe} />
+        ) : (
+          <RecipeList recipes={recipes} onRecipeClick={handleRecipeClick} />
+        )}
+      <Footer></Footer>
     </div>
   );
-}
+};
 
 export default App;
